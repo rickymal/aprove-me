@@ -1,21 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { CreateAssignorDto } from './dto/create-assignor.dto';
 import type { UpdateAssignorDto } from './dto/update-assignor.dto';
-import type { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/database/prisma.service';
 import { Pagination } from 'src/types/Pagination';
-
 
 @Injectable()
 export class AssignorService {
   private readonly logger = new Logger(AssignorService.name);
 
-  constructor(private prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   create(createAssignorDto: CreateAssignorDto) {
     return this.prisma.assignor.create({ data: createAssignorDto });
   }
 
-  findAll(params : Pagination) {
+  findAll(params: Pagination) {
     return this.prisma.assignor.findMany(params);
   }
 

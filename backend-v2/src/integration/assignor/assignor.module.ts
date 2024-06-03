@@ -7,6 +7,5 @@ import { DatabaseModule } from 'src/database/database.module';
   imports: [DatabaseModule],
   controllers: [AssignorController],
   providers: [AssignorService],
-  // exports: [AssignorController],
 })
 export class AssignorModule {}
