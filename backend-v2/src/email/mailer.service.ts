@@ -7,18 +7,18 @@ type ContextOptions = {
   failure: number;
 };
 
-type MailOption = {
+type MailOption<T> = {
   to : string
   subject : string
   template : string
-  context : ContextOptions
+  context : T
 }
 
 @Injectable()
 export class MailerService {
   constructor(private readonly mailerService: NestMailerService) {}
 
-  async sendMail(options: MailOption) {
+  async sendMail<T>(options: MailOption<T>) {
     return this.mailerService.sendMail(options);
   }
 }

@@ -19,8 +19,7 @@ import { MailerService } from './mailer.service';
         from: '"No Reply" <noreply@aproveme.com>',
       },
       template: {
-        // dir: join(__dirname, '..','..','public','templates'), // /app/dist/mailer/mailer/templates/payable-failed.hbs
-        dir: join(__dirname,'templates'),
+        dir: join(__dirname, '..','..','public','email','templates'), // /app/dist/mailer/mailer/templates/payable-failed.hbs
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

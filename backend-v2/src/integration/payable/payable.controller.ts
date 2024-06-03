@@ -5,7 +5,7 @@ import { UpdatePayableDto } from './dto/update-payable.dto';
 import { RabbitMqFactoryService, RabbitMqProducer } from 'src/queue/rabbit-mq.service';
 
 
-@Controller('payables')
+@Controller()
 export class PayableController implements OnModuleInit {
   producer: RabbitMqProducer<CreatePayableDto>;
   constructor(
