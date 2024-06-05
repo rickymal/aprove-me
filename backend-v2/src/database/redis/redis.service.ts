@@ -7,7 +7,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.client = createClient({
-      url: 'redis://redis:6379', // Ajuste conforme necessário // qui vc deveria puxar o valor do.env
+      url: process.env.REDIS_URL || 'redis://localhost:6379', // Ajuste conforme necessário
     });
 
     this.client.on('error', (err) => console.error('Redis Client Error', err));
@@ -18,11 +18,15 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     await this.client.disconnect();
   }
 
-  async set(key: string, value: string): Promise<void> {
-    await this.client.set(key, value);
+  async set(key: string, value: string, expiry?: number): Promise<void> {
+    if (expiry) {
+      await this.client.set(key, value, { EX: expiry });
+    } else {
+      await this.client.set(key, value);
+    }
   }
 
-  async get(key: string): Promise<string> {
+  async get(key: string): Promise<string | null> {
     return this.client.get(key);
   }
 

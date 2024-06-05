@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Pagination } from '../../types/Pagination';
 import type { CreatePayableDto } from './dto/create-payable.dto';
 import type { UpdatePayableDto } from './dto/update-payable.dto';
@@ -10,8 +10,12 @@ export class PayableService {
 
   constructor(private prisma: PrismaService) { }
   
-  create(createPayableDto: CreatePayableDto) {
-    return this.prisma.payable.create({ data: createPayableDto });
+  async create(createPayableDto: CreatePayableDto) {
+    try {
+      return await this.prisma.payable.create({ data: createPayableDto });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   findAll(params: Pagination) {
@@ -22,11 +26,15 @@ export class PayableService {
     return this.prisma.payable.findUnique({ where: { id } });
   }
 
-  update(id: string, updatePayableDto: UpdatePayableDto) {
-    return this.prisma.payable.update({
-      where: { id },
-      data: updatePayableDto,
-    });
+  async update(id: string, updatePayableDto: UpdatePayableDto) {
+    try {
+      return await this.prisma.payable.update({
+        where: { id },
+        data: updatePayableDto,
+      });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   remove(id: string) {

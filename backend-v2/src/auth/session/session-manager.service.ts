@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { RedisService } from 'src/database/redis/redis.service';
 import { v4 as uuidv4 } from 'uuid';
+
 
 interface Session {
   user: User;
@@ -9,43 +11,42 @@ interface Session {
 
 @Injectable()
 export class SessionManagerService {
-  private sessions: Map<string, Session>;
   private expiryDuration: number;
 
-
-  constructor() {
-    this.sessions = new Map<string, Session>();
+  constructor(private readonly redisService: RedisService) {
     const expiryMinutes = parseInt(process.env.SESSION_EXPIRY_MINUTES || '60');
     this.expiryDuration = expiryMinutes * 60 * 1000;
   }
 
-  createSession(user: User): string {
+  async createSession(user: User): Promise<string> {
     const token = uuidv4();
     const expiry = Date.now() + this.expiryDuration;
-    this.sessions.set(token, { user, expiry });
+    const session: Session = { user, expiry };
+    await this.redisService.set(token, JSON.stringify(session), this.expiryDuration / 1000);
     return token;
   }
-  getAllSessions(): number {
-    return this.sessions.size;
+
+  async getAllSessions(): Promise<number> {
+    const keys = await this.redisService.keys('*');
+    return keys.length;
   }
 
-  getSession(token: string): User | null {
-    const session = this.sessions.get(token);
-    if (!session) {
+  async getSession(token: string): Promise<User | null> {
+    const sessionData = await this.redisService.get(token);
+    if (!sessionData) {
       return null;
     }
 
-
-
+    const session: Session = JSON.parse(sessionData);
     if (session.expiry < Date.now()) {
-      this.sessions.delete(token);
+      await this.redisService.del(token);
       return null;
     }
 
     return session.user;
   }
 
-  removeSession(token: string): void {
-    this.sessions.delete(token);
+  async removeSession(token: string): Promise<void> {
+    await this.redisService.del(token);
   }
 }

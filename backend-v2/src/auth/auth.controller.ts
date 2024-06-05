@@ -6,7 +6,7 @@ class UserDTO {
     password : string
 }
 
-@Controller('integrations')
+@Controller('integration')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

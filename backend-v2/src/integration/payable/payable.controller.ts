@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, OnModuleInit, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, OnModuleInit, Query, UseGuards } from '@nestjs/common';
 import { PayableService } from './payable.service';
 import { CreatePayableDto } from './dto/create-payable.dto';
 import { UpdatePayableDto } from './dto/update-payable.dto';
 import { RabbitMqFactoryService, RabbitMqProducer } from 'src/queue/rabbit-mq.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 
+@UseGuards(AuthGuard)
 @Controller()
 export class PayableController implements OnModuleInit {
   producer: RabbitMqProducer<CreatePayableDto>;

@@ -5,5 +5,6 @@ export class CreatePayableDto implements Prisma.PayableCreateInput {
     amount: number;
     emissionDate: string | Date;
     assignor: Prisma.AssignorCreateNestedOneWithoutPayablesInput;
+    // assignor: Prisma.AssignorCreateNestedOneWithoutPayablesInput;
 }
 

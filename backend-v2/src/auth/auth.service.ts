@@ -44,7 +44,7 @@ export class AuthService {
     const salt = randomBytes(16).toString('hex');
     const hashedPassword = this.hashPassword(password + '#AproveMe', salt);
     user = await this.userRepository.create({ email, password: `${salt}:${hashedPassword}` });
-    const token = this.sessionManager.createSession(user);
+    const token = await this.sessionManager.createSession(user);
     return { id: user.id, email: user.email, token };
   }
 
@@ -60,7 +60,7 @@ export class AuthService {
       throw new HttpException('Invalid email or password', HttpStatus.UNAUTHORIZED);
     }
 
-    const token = this.sessionManager.createSession(user);
+    const token = await this.sessionManager.createSession(user);
     return { id: user.id, email: user.email, token };
   }
 
