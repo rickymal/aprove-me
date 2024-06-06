@@ -2,7 +2,9 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Pagination } from '../../types/Pagination';
 import type { CreatePayableDto } from './dto/create-payable.dto';
 import type { UpdatePayableDto } from './dto/update-payable.dto';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from '@database/prisma.service';
+// import { PrismaService } from '@database/prisma.service';
+
 
 @Injectable()
 export class PayableService {

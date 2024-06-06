@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, OnModuleInit, Query,
 import { PayableService } from './payable.service';
 import { CreatePayableDto } from './dto/create-payable.dto';
 import { UpdatePayableDto } from './dto/update-payable.dto';
-import { RabbitMqFactoryService, RabbitMqProducer } from 'src/queue/rabbit-mq.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { RabbitMqFactoryService, RabbitMqProducer } from '@queue/rabbit-mq.service';
+import { AuthGuard } from '@auth/auth.guard';
 
 
 @UseGuards(AuthGuard)

@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { Payable } from '@prisma/client';
-import { RabbitMqFactoryService, RabbitMqProducer } from 'src/queue/rabbit-mq.service';
+import { RabbitMqFactoryService, RabbitMqProducer } from '@queue/rabbit-mq.service';
 import { CreatePayableDto } from '../dto/create-payable.dto';
-import { MailerService } from 'src/email/mailer.service';
+import { MailerService } from '@email/mailer.service';
 import { PayableService } from '../payable.service';
 
 @Injectable()

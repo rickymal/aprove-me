@@ -62,10 +62,19 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
+
+    "rootDir": "./",
+    "testRegex": ".service\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "@auth/(.*)": "<rootDir>/src/auth/$1",
+      "@database/(.*)": "<rootDir>/src/database/$1",
+      "@email/(.*)": "<rootDir>/src/email/$1",
+      "@integration/(.*)": "<rootDir>/src/integration/$1",
+      "@queue/(.*)": "<rootDir>/src/queue/$1",
+      "@types/(.*)": "<rootDir>/src/types/$1"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"

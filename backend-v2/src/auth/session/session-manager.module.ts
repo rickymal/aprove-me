@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SessionManagerService } from './session-manager.service';
-import { RedisService } from 'src/database/redis/redis.service';
+import { RedisService } from '@database/redis/redis.service';
 
 @Module({
   imports: [],

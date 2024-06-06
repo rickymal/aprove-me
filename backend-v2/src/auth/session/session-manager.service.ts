@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { RedisService } from 'src/database/redis/redis.service';
+import { RedisService } from '@database/redis/redis.service';
 import { v4 as uuidv4 } from 'uuid';
 
 
