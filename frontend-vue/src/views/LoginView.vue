@@ -10,7 +10,7 @@ const errorMessage = ref('');
 
 const signIn = async (e: Event) => {
   e.preventDefault();
-  const nextRouter = route.query.next || '/'; 
+  const nextRouter = (route.query.next as string) || '/';
 
   const result = await fetch("http://localhost:3000/integrations/auth", {
     method: 'POST',
@@ -29,7 +29,7 @@ const signIn = async (e: Event) => {
 
 const signUp = async (e: Event) => {
   e.preventDefault();
-  const nextRouter = route.query.next || '/'; 
+  const nextRouter = (route.query.next as string) || '/';
 
   const result = await fetch("http://localhost:3000/integrations/register", {
     method: 'POST',
@@ -47,8 +47,8 @@ const signUp = async (e: Event) => {
 };
 
 onMounted(() => {
-  if (route.query.next) {
-    errorMessage.value = route.query.message
+  if (route.query.next && typeof route.query.message === 'string') {
+    errorMessage.value = route.query.message;
   }
 });
 </script>
