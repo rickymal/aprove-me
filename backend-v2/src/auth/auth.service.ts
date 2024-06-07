@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { createHmac, randomBytes, pbkdf2Sync } from 'crypto';
 import { SessionManagerService } from './session/session-manager.service';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from '@database/prisma.service';
 
 @Injectable()
 export class UserRepository {

@@ -23,7 +23,7 @@
       "@email/*": ["src/email/*"],
       "@integration/*": ["src/integration/*"],
       "@queue/*": ["src/queue/*"],
-      "@types/*": ["src/types/*"]
+      // "@types/*": ["src/types/*"]
     }
   }
 }

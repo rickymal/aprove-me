@@ -5,7 +5,7 @@ import { AuthController } from './auth.controller';
 // import { SessionManagerService } from './session-manager.service';
 import { AuthGuard } from './auth.guard';
 import { SessionModule } from './session/session-manager.module';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from '@database/prisma.service';
 
 @Module({
   imports: [SessionModule],

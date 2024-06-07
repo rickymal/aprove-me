@@ -11,24 +11,12 @@ import { CreatePayableDto } from '../dto/create-payable.dto';
 
 describe('PayableConsumerService', () => {
   let service: PayableConsumerService;
-  let rabbitMqFactoryService : RabbitMqFactoryService
-
-  // const integrationModule = await Test.createTestingModule({
-  //   providers: [PayableService, PayableConsumerService],
-  //   imports: [
-  //     DatabaseModule,
-  //     BrokerModule,
-  //     MailerConfigModule,
-  //     SessionModule,
-  //     PayableModule,
-  //   ]
-  // }).compile()
+  let rabbitMqFactoryService : RabbitMqFactoryService;
 
   const mockedRabbitMqService = {
     createConsumer: jest.fn(),
     createProducer: jest.fn(),
-  }
-
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,23 +33,24 @@ describe('PayableConsumerService', () => {
     service = module.get<PayableConsumerService>(PayableConsumerService);
     rabbitMqFactoryService = module.get<RabbitMqFactoryService>(RabbitMqFactoryService);
 
+    mockedRabbitMqService.createConsumer.mockReturnValue({
+      addPayableListener: jest.fn(),
+    });
+
+    mockedRabbitMqService.createProducer.mockReturnValue({
+      addToQueue: jest.fn(),
+    });
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should initialize', async() => { 
-    service.onModuleInit()
-
-    mockedRabbitMqService.createConsumer.mockResolvedValue({
-      addPayableListener: jest.fn(),
-    })
+  it('should initialize', async () => { 
+    await service.onModuleInit();
 
     expect(mockedRabbitMqService.createConsumer).toHaveBeenCalledTimes(1);
     expect(mockedRabbitMqService.createProducer).toHaveBeenCalledTimes(1);
-    expect(mockedRabbitMqService.createProducer).toHaveBeenCalledWith('payable-death')
-
-  })
+    expect(mockedRabbitMqService.createProducer).toHaveBeenCalledWith('payables-death');
+  });
 });
-
