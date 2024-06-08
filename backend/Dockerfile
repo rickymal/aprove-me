@@ -10,6 +10,5 @@ COPY . .
 
 RUN npx prisma generate
 
-# RUN npm run build
-
+# Usar o mesmo ENTRYPOINT
 ENTRYPOINT ["./init.sh"]

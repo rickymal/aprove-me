@@ -1,18 +1,12 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IsString } from 'class-validator';
-import { User } from '@prisma/client';
-
 
 class UserDTO {
-    @IsString()
     email : string
-
-    @IsString()
     password : string
 }
 
-@Controller('integrations')
+@Controller('integration')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
