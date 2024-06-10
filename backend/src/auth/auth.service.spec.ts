@@ -1,107 +1,94 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { AuthService, UserRepository } from "./auth.service";  // Use caminho relativo por enquanto
-import { SessionModule } from "./session/session-manager.module";  // Use caminho relativo por enquanto
-import { AuthGuard } from "./auth.guard";  // Use caminho relativo por enquanto
-import { AuthController } from "./auth.controller";  // Use caminho relativo por enquanto
-import { SessionManagerService } from "./session/session-manager.service";  // Use caminho relativo por enquanto
-import { PrismaService } from "../prisma/prisma.service";  // Use caminho relativo por enquanto
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
+import { AuthService, UserRepository } from "./auth.service";
+import { SessionManagerService } from "./session/session-manager.service";
+import { RedisService } from "@database/redis/redis.service";
+import { User } from "@prisma/client";
+import { createHmac, randomBytes, pbkdf2Sync } from 'crypto';
 
-describe("AuthService", () => {
+
+jest.mock('uuid', () => ({
+  v4: jest.fn(),
+}));
+
+describe("registration service", () => {
   let authService: AuthService;
-  let mockSessionManager;
-  let mockUserRepository;
 
-  const userEmail = "henriquemauler@gmail.com";
-  const token = "mockedtoken";
-  
-  const request = {
-    email: userEmail,
-    password: "12345",
+  const mockedUserRepository = {
+    create: jest.fn(),
+    findOne: jest.fn(),
+    findOneByEmail: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   };
-  
 
-  beforeEach(async () => {
-    mockSessionManager = {
-      createSession: jest.fn(),
-      getSession: jest.fn(),
-      removeSession: jest.fn(),
-    };
+  const mockedRedisService = {
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn(),
+  };
 
-    mockUserRepository = {
-      findOneByEmail: jest.fn(),
-      create: jest.fn(),
-    };
+  const mockedSessionManagerService = {
+    createSession: jest.fn(),
+  };
 
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [SessionModule],
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: UserRepository, useValue: mockUserRepository },
-        PrismaService,
-        { provide: SessionManagerService, useValue: mockSessionManager },
-        AuthGuard,
+        { provide: UserRepository, useValue: mockedUserRepository },
+        { provide: SessionManagerService, useValue: mockedSessionManagerService },
+        { provide: RedisService, useValue: mockedRedisService },
       ],
-      controllers: [AuthController],
     }).compile();
 
-    authService = module.get<AuthService>(AuthService);
-
-    
-    // Mock responses
-    mockSessionManager.createSession.mockReturnValue(token);
-
-    mockUserRepository.create.mockResolvedValue({
-      id: "123",
-      email: userEmail,
-      password: "hashedpassword",
-    });
-
+    authService = module.get(AuthService);
   });
-  
-  it("should register a user (that not exists yet)", async () => {
-    mockUserRepository.findOneByEmail.mockResolvedValue(null); 
 
-    const response = await authService.register(request.email, request.password);
-
-    expect(response).toEqual({
-      id: "123",
-      email: userEmail,
-      token: token,
-    });
-
-    expect(mockUserRepository.findOneByEmail).toHaveBeenCalledWith(userEmail);
-    expect(mockUserRepository.create).toHaveBeenCalledWith({
-      email: userEmail,
-      // password: "hashedpassword", 
-      password: expect.any(String), 
-    });
-
-    // expect(mockSessionManager.createSession).toHaveBeenCalledWith(expect.objectContaining({
-    //   id: "123",
-    //   email: userEmail,
-    //   password: "hashedpassword",
-    // }));
+  afterEach(() => {
+    jest.clearAllMocks();
   });
+
+  it('should be capable to register an user', async () => {
+    const email = 'test@example.com';
+    const password = 'password';
+    const token = 'generated-token';
+
+    const id = '1';
+    const user: User = { id, email, password: 'hashedpassword' };
+
+    mockedUserRepository.findOneByEmail.mockResolvedValue(null);
+    mockedUserRepository.create.mockResolvedValue(user);
+    mockedSessionManagerService.createSession.mockResolvedValue(token);
+
+    const response = await authService.register(email, password);
+
+    expect(mockedUserRepository.findOneByEmail).toHaveBeenCalledWith(email);
+    expect(mockedUserRepository.create).toHaveBeenCalledWith({
+      email,
+      password: expect.any(String),
+    });
+    expect(mockedSessionManagerService.createSession).toHaveBeenCalledWith(user);
+    expect(response).toEqual({ id, email, token });
+  });
+
+
   
-  it("should try register a user that already exists", async () => {
-    mockUserRepository.findOneByEmail.mockResolvedValue({
-      id: "123",
-      email: userEmail,
-      password: "hashedpassword",
-    }); 
+  it('should not be capable to register an user if already exists', async () => {
+    const email = 'test@example.com';
+    const password = 'password';
+    const token = 'generated-token';
 
+    const id = '1';
+    const user: User = { id, email, password: 'hashedpassword' };
 
-    // const response = authService.register(request.email, request.password);
+    mockedUserRepository.findOneByEmail.mockResolvedValue(true);
+    mockedUserRepository.create.mockResolvedValue(user);
+    mockedSessionManagerService.createSession.mockResolvedValue(token);
 
-    // Use Jest's rejects.toThrow to check if the correct exception is thrown
-    await expect(authService.register(request.email, request.password)).rejects.toThrow(
-      new HttpException('User already exists', HttpStatus.BAD_REQUEST)
-    );
-
-    // expect(mockUserRepository.findOneByEmail).toHaveBeenCalledWith(userEmail)
-    expect(mockUserRepository.findOneByEmail).toHaveBeenCalled()
-    expect(mockUserRepository.create).not.toHaveBeenCalled()
-
+    expect(authService.register(email, password)).rejects.toThrow(new Error("User already exists"));
   });
 });

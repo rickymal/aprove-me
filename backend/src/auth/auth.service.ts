@@ -1,11 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-// import {PrismaService} from '@prisma/content/prisma.service'
-import {PrismaService} from '../prisma/prisma.service'
-// import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+import { createHmac, randomBytes, pbkdf2Sync } from 'crypto';
 import { SessionManagerService } from './session/session-manager.service';
-// import { SessionManagerService } from './session-manager.service';
+import { PrismaService } from '@database/prisma.service';
 
 @Injectable()
 export class UserRepository {
@@ -22,10 +19,6 @@ export class UserRepository {
     return user
   }
 
-//   async findAll(): Promise<User[]> {
-//     return this.prisma.user.findMany();
-//   }
-
   async findOne(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { id } });
   }
@@ -33,20 +26,7 @@ export class UserRepository {
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { email : email } });
   }
-
-//   async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
-//     return this.prisma.user.update({ where: { id }, data });
-//   }
-
-//   async delete(id: string): Promise<User> {
-//     return this.prisma.user.delete({ where: { id } });
-//   }
 }
-
-type UserSession = Omit<User, "password"> & {
-  token: string;
-};
-
 
 @Injectable()
 export class AuthService {
@@ -61,9 +41,10 @@ export class AuthService {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
-    const hashedPassword = await bcrypt.hash(password + '#AproveMe', 10);
-    user = await this.userRepository.create({ email, password: hashedPassword });
-    const token = this.sessionManager.createSession(user);
+    const salt = randomBytes(16).toString('hex');
+    const hashedPassword = this.hashPassword(password + '#AproveMe', salt);
+    user = await this.userRepository.create({ email, password: `${salt}:${hashedPassword}` });
+    const token = await this.sessionManager.createSession(user);
     return { id: user.id, email: user.email, token };
   }
 
@@ -72,12 +53,19 @@ export class AuthService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
-    const isPasswordValid = await bcrypt.compare(password + '#AproveMe', user.password);
-    if (!isPasswordValid) {
+
+    const [salt, storedHash] = user.password.split(':');
+    const hashedPassword = this.hashPassword(password + '#AproveMe', salt);
+    if (hashedPassword !== storedHash) {
       throw new HttpException('Invalid email or password', HttpStatus.UNAUTHORIZED);
     }
 
-    const token = this.sessionManager.createSession(user);
+    const token = await this.sessionManager.createSession(user);
     return { id: user.id, email: user.email, token };
+  }
+
+  private hashPassword(password: string, salt: string): string {
+    const hash = pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+    return hash;
   }
 }

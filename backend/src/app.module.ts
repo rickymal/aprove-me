@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PayableModule } from './payable/payable.module';
-import { PrismaService } from './prisma/prisma.service';
-import { AssignorModule } from './assignor/assignor.module';
+import { DatabaseModule } from './database/database.module';
+import { IntegrationModule } from './integration/integration.module';
 import { AuthModule } from './auth/auth.module';
-import { TestModule } from './test/test.module';
 
 @Module({
-  imports: [PayableModule, AssignorModule, AuthModule, TestModule],
+  imports: [IntegrationModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
