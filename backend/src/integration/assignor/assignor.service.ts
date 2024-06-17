@@ -4,11 +4,6 @@ import type { UpdateAssignorDto } from './dto/update-assignor.dto';
 import { PrismaService } from '@database/prisma.service';
 import type { Pagination } from 'src/types/Pagination';
 
-
-// import type { Pagination } from '@types/Pagination'; // Cannot import type declaration files. Consider importing 'Pagination' instead of '@types/Pagination'.ts(6137)
-
-
-
 @Injectable()
 export class AssignorService {
   private readonly logger = new Logger(AssignorService.name);

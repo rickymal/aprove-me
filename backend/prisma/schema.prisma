@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
@@ -10,7 +7,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 model Payable {
   id           String   @id @default(uuid())
@@ -29,9 +25,113 @@ model Assignor {
   payables Payable[]
 }
 
-
 model User {
   id       String @id @default(uuid())
   email    String @unique
   password String
+  Student  Student?
 }
+
+model Student {
+  id                String                @id @default(uuid())
+  user_id           String                @unique
+  user              User                  @relation(fields: [user_id], references: [id])
+  organizations     Organization[]
+  questionFeedbacks QuestionFeedback[]
+  studentQuestions  StudentQuestion[]
+}
+
+model Organization {
+  id           String      @id @default(uuid())
+  name         String
+  description  String?
+  email        String?
+  website      String?
+  phone        String?
+  logo         String?
+  cover        String?
+  logo_url     String?
+  cover_url    String?
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @default(now())
+  students     Student[]   // @relation(fields: [student_id], references: [id])
+  tests        Test[]      // @relation(fields: [student_id], references: [id])
+}
+
+model Test {
+  id             String      @id @default(uuid())
+  organization_id String
+  organization   Organization @relation(fields: [organization_id], references: [id])
+  name           String
+  description    String?
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @default(now())
+  questions      Question[]
+}
+
+model Question {
+  id             String             @id @default(uuid())
+  created_at     DateTime           @default(now())
+  updated_at     DateTime           @default(now())
+  question_text  String             @db.Text
+  test_id        String
+  test           Test               @relation(fields: [test_id], references: [id])
+  categories     QuestionCategory[]
+  answers        QuestionAnswer[]
+  feedbacks      QuestionFeedback[]
+  studentQuestions StudentQuestion[]
+}
+
+model QuestionCategory {
+  id             String             @id @default(uuid())
+  category_name  String             @db.VarChar(50)
+  description    String?            @db.Text
+  question_id    String
+  question       Question           @relation(fields: [question_id], references: [id])
+}
+
+model QuestionAnswer {
+  id             String             @id @default(uuid())
+  created_at     DateTime           @default(now())
+  updated_at     DateTime           @default(now())
+  question_id    String
+  answer_text    String             @db.Text
+  is_correct     Boolean?
+  question       Question           @relation(fields: [question_id], references: [id])
+  studentQuestions StudentQuestion[]
+}
+
+model StudentQuestion {
+  id             String    @id @default(uuid())
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @default(now())
+  question_id    String
+  question       Question  @relation(fields: [question_id], references: [id])
+  answer_id      String?
+  answer         QuestionAnswer? @relation(fields: [answer_id], references: [id])
+  student_id     String
+  student        Student   @relation(fields: [student_id], references: [id])
+  answer_text    String?   // Campo para resposta discursiva
+  is_excluded    Boolean   @default(false) // Para marcar respostas como excluídas
+}
+
+model QuestionFeedback {
+  id             String        @id @default(uuid())
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now())
+  student_id     String
+  question_id    String
+  feedback_text  String?       @db.Text
+  duration       Int           @db.Integer // tempo que o usuário ficou preso na questão
+  student        Student       @relation(fields: [student_id], references: [id])
+  question       Question      @relation(fields: [question_id], references: [id])
+}
+
+// model StudentStatistic {
+//   id                String    @id @default(uuid())
+//   questions_asked   Int
+//   questions_answered Int
+//   correct_answers   Int
+//   student_id        String
+//   student           Student   @relation(fields: [student_id], references: [id])
+// }
