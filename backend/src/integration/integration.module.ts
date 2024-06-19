@@ -3,6 +3,7 @@ import { RouterModule } from '@nestjs/core';
 import { PayableModule } from './payable/payable.module';
 import { AssignorModule } from './assignor/assignor.module';
 import { OrganizationModule } from './organization/organization.module';
+import { OrganizationTestModule } from './organization-test/organization-test.module';
 
 @Module({
   imports: [
@@ -21,6 +22,10 @@ import { OrganizationModule } from './organization/organization.module';
           {
             path: "organization",
             module: OrganizationModule,
+          },
+          {
+            path: "organization-test",
+            module: OrganizationTestModule,
           }
         ],
       },
@@ -28,6 +33,7 @@ import { OrganizationModule } from './organization/organization.module';
     PayableModule,
     AssignorModule,
     OrganizationModule,
+    OrganizationTestModule,
   ],
   controllers: [],
 })
