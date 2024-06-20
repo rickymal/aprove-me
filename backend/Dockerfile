@@ -10,5 +10,4 @@ COPY . .
 
 RUN npx prisma generate
 
-# Usar o mesmo ENTRYPOINT
 ENTRYPOINT ["./init.sh"]

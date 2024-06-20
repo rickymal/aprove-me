@@ -3,6 +3,9 @@
 # Rodar as migrações do Prisma
 npx prisma migrate deploy
 
+# Sincronizar o banco de dados com o esquema Prisma (se necessário)
+npx prisma db push
+
 # Função para copiar os templates
 copy_templates() {
   echo "Copying Handlebars templates to dist directory"
@@ -30,11 +33,6 @@ case "$NODE_ENV" in
   development)
     echo "Running in development mode"
     npm run start:dev
-    # dev_pid=$!
-    # copy_templates
-
-    # # Mantém o contêiner ativo e espera o processo de desenvolvimento finalizar
-    # tail -f /dev/null & wait $dev_pid
     ;;
   test)
     echo "Running in test mode"
