@@ -6,6 +6,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { OrganizationTestModule } from './organization-test/organization-test.module';
 import { QuestionModule } from './question/question.module';
 import { StudentModule } from './student/student.module';
+import { StudentQuestionModule } from './student-question/student-question.module';
 
 @Module({
   imports: [
@@ -36,6 +37,10 @@ import { StudentModule } from './student/student.module';
           {
             path: "/",  // Eu passei o caminho no controller.
             module: StudentModule,
+          },
+          {
+            path: "/",
+            module: StudentQuestionModule
           }
         ],
       },
@@ -46,6 +51,7 @@ import { StudentModule } from './student/student.module';
     OrganizationTestModule,
     QuestionModule,
     StudentModule,
+    StudentQuestionModule,
   ],
   controllers: [],
 })
