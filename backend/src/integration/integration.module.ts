@@ -7,6 +7,9 @@ import { OrganizationTestModule } from './organization-test/organization-test.mo
 import { QuestionModule } from './question/question.module';
 import { StudentModule } from './student/student.module';
 import { StudentQuestionModule } from './student-question/student-question.module';
+import { TestQuestionModule } from './test-question/test-question.module';
+import { TestQuestion } from './test-question/entities/test-question.entity';
+
 
 @Module({
   imports: [
@@ -41,6 +44,10 @@ import { StudentQuestionModule } from './student-question/student-question.modul
           {
             path: "/",
             module: StudentQuestionModule
+          },
+          {
+            path: "/",
+            module: TestQuestion,
           }
         ],
       },
@@ -52,6 +59,8 @@ import { StudentQuestionModule } from './student-question/student-question.modul
     QuestionModule,
     StudentModule,
     StudentQuestionModule,
+    TestQuestion,
+    TestQuestionModule,
   ],
   controllers: [],
 })
