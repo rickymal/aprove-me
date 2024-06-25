@@ -3,12 +3,11 @@ import { RouterModule } from '@nestjs/core';
 import { PayableModule } from './payable/payable.module';
 import { AssignorModule } from './assignor/assignor.module';
 import { OrganizationModule } from './organization/organization.module';
-import { OrganizationTestModule } from './organization-test/organization-test.module';
 import { QuestionModule } from './question/question.module';
 import { StudentModule } from './student/student.module';
 import { StudentQuestionModule } from './student-question/student-question.module';
-import { TestQuestionModule } from './test-question/test-question.module';
-import { TestQuestion } from './test-question/entities/test-question.entity';
+import { TestQuestionModule } from './assessment/test-question.module';
+import { TestQuestion } from './assessment/entities/test-question.entity';
 
 
 @Module({
@@ -29,16 +28,16 @@ import { TestQuestion } from './test-question/entities/test-question.entity';
             path: "organization",
             module: OrganizationModule,
           },
-          {
-            path: "organization-test",
-            module: OrganizationTestModule,
-          },
+          // {
+          //   path: "organization-test",
+          //   module: OrganizationTestModule,
+          // },
           {
             path: "question",
             module: QuestionModule,
           },
           {
-            path: "/",  // Eu passei o caminho no controller.
+            path: "/",
             module: StudentModule,
           },
           {
@@ -55,7 +54,7 @@ import { TestQuestion } from './test-question/entities/test-question.entity';
     PayableModule,
     AssignorModule,
     OrganizationModule,
-    OrganizationTestModule,
+    // OrganizationTestModule,
     QuestionModule,
     StudentModule,
     StudentQuestionModule,

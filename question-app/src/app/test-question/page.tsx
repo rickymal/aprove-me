@@ -1,8 +1,8 @@
 "use client"
 // pages/test/[id].tsx
 import { useSearchParams } from 'next/navigation';
-import Sidebar from '../../components/Sidebar';
-import TestDashboard from '../../components/Question';
+import Sidebar from '../components/Sidebar';
+import TestDashboard from '../components/Question';
 import { useEffect, useState } from 'react';
 
 // const questions = {
@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 
 async function requestAllTests() : Promise<Array<{name : string, id : string}>> {
 
-  const response = await fetch(`http://localhost:3000/api/test`, {cache: "no-store"})
+  const response = await fetch(`http://localhost:3000/integration/test-question`, {cache: "no-store"})
   if (!response.ok) {
     const message = `An error has occurred: ${response.status}`;
     throw new Error(message);
@@ -37,10 +37,12 @@ type QuestionItem = {
   }[];
 };
 
-
-
 async function loadQuestion(test: {name : string, id : string}) : Promise<QuestionItem[]> {
-  const response = await fetch(`http://localhost:3000/api/test/${test.id}`, {cache: "no-store"})
+  const urlSearchParams = new URLSearchParams({
+    testId: test.id
+  })
+
+  const response = await fetch(`http://localhost:8080/integration/question?${urlSearchParams.toString()}`, {cache: "no-store"})
   if (!response.ok) {
     const message = `An error has occurred  : ${response.status}`;
   }
@@ -56,7 +58,6 @@ async function onQuestionSelected(question : {}) {
 const Dashboard: React.FC<{ params: { id: string } }> = ({ params }) => {
 
   const [options, setOptions] = useState<Array<{name : string, id : string}> | null>(null);
-
   const [activeTest, setActiveTest] = useState<{
     questionItem : QuestionItem,
     solved : boolean
@@ -72,7 +73,6 @@ const Dashboard: React.FC<{ params: { id: string } }> = ({ params }) => {
     }).catch(err => {
       console.error(err)
     })
-
   }, [])
 
   const id = useSearchParams().get('id')

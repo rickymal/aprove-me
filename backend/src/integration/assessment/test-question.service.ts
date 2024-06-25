@@ -22,8 +22,25 @@ export class TestQuestionService {
     return this.prismaService.test.findMany()
   }
 
+  findAllNames() {
+    return this.prismaService.test.findMany({
+      select: {
+        id: true,
+        name: true
+      }
+    })
+  }
+
   findOne(id: string) {
     throw new Error("Not implemented")
+  }
+
+  findByTestId(id: string) {
+    return this.prismaService.test.findMany({
+      where: {
+        
+      }
+    })
   }
 
   update(id: string, updateTestQuestionDto: UpdateTestQuestionDto) {

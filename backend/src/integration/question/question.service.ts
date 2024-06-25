@@ -20,6 +20,13 @@ export class QuestionService {
     return this.prismaService.question.findMany();
   }
 
+
+  findByTestId(testId: string) {
+    return this.prismaService.question.findMany({
+      where: { test_id: testId },
+    });
+  }
+
   findOne(id: string) {
     return this.prismaService.question.findUnique({
       where: { id: id },
