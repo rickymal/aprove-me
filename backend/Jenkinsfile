@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        DOCKER_COMPOSE_FILE = 'docker-compose.test.yml'
     }
 
     stages {
@@ -11,40 +11,36 @@ pipeline {
                 git branch: 'dev', url: 'https://github.com/rickymal/aprove-me'
             }
         }
+        stage('Docker Compose Up') {
+            steps {
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
+            }
+        }
         stage('Install Dependencies') {
             steps {
-                sh 'docker-compose run --rm app npm install'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm install'
             }
         }
         stage('Lint') {
             steps {
-                sh 'docker-compose run --rm app npm run lint'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run lint'
             }
         }
         stage('Test') {
             steps {
-                sh 'docker-compose run --rm app npm run test'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run test'
             }
         }
         stage('Build') {
             steps {
-                sh 'docker-compose run --rm app npm run build'
-            }
-        }
-        stage('Docker Compose Up') {
-            steps {
-                sh 'docker-compose up -d'
-            }
-        }
-        stage('Docker Compose Down') {
-            steps {
-                sh 'docker-compose down'
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run build'
             }
         }
     }
 
     post {
         always {
+            sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
             cleanWs()
         }
         success {

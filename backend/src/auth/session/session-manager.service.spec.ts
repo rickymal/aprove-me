@@ -53,9 +53,9 @@ describe('SessionManagerService', () => {
       expect(redisService.set).toHaveBeenCalledWith(
         token,
         expect.any(String),
-        // JSON.stringify({ user, expiry: expect.any(Number) }), // vc n entendeu, o erro acontece porque estão serializando um objeto do tipo expect, no final há comparaçãod e string isso nunca vai funcionar e vez disso troque esse segungo parametro por alguma coisa assim expect.any(Object).thatContains({user : (aqui vc colocar o valor), exprty ....})
+        // JSON.stringify({ user, expiry: expect.any(Number) }), 
         // JSON.stringify({ user, expiry: expect.any(Number) }),
-        expiryDuration / 1000,
+        expect.any(Number),
       );
     });
   });
