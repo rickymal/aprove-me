@@ -10,4 +10,7 @@ COPY . .
 
 RUN npx prisma generate
 
+EXPOSE 3000
+
 ENTRYPOINT ["./init.sh"]
+

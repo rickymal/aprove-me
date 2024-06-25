@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'dev', url: 'https://github.com/rickymal/aprove-me'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'docker-compose run --rm app npm install'
+            }
+        }
+        stage('Lint') {
+            steps {
+                sh 'docker-compose run --rm app npm run lint'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'docker-compose run --rm app npm run test'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'docker-compose run --rm app npm run build'
+            }
+        }
+        stage('Docker Compose Up') {
+            steps {
+                sh 'docker-compose up -d'
+            }
+        }
+        stage('Docker Compose Down') {
+            steps {
+                sh 'docker-compose down'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

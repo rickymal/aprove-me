@@ -19,7 +19,7 @@ describe('AssignorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [AssignorService],
+      providers: [AssignorService, PrismaService],
     }).overrideProvider(PrismaService).useValue(mockerPrismaService).compile();
 
     service = module.get<AssignorService>(AssignorService);
