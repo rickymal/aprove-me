@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_COMPOSE_FILE = 'backend/docker-compose.yml'
+    }
 
     stages {
         stage('Checkout') {
@@ -10,39 +13,53 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'docker-compose -f docker-compose.yml run --rm app npm install'
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm install'
+                }
             }
         }
         stage('Generate Prisma') {
             steps {
-                sh 'docker-compose -f docker-compose.yml run --rm app npx prisma generate'
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npx prisma generate'
+                }
             }
         }
         stage('Run Migrations') {
             steps {
-                sh 'docker-compose -f docker-compose.yml run --rm app npx prisma migrate deploy'
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npx prisma migrate deploy'
+                }
+            }
+        }
+        stage('Lint') {
+            steps {
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run lint'
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'docker-compose -f docker-compose.yml run --rm app npm run test'
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run test'
+                }
             }
         }
-        // stage('Lint') {
-        //     steps {
-        //         sh 'docker-compose -f docker-compose.yml run --rm app npm run lint'
-        //     }
-        // }
         stage('Build') {
             steps {
-                sh 'docker-compose -f docker-compose.yml run --rm app npm run build'
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run build'
+                }
             }
         }
     }
 
     post {
         always {
-            sh 'docker-compose -f docker-compose.yml down'
+            dir('backend') {
+                sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+            }
             cleanWs()
         }
         success {
