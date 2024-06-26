@@ -7,8 +7,8 @@ import { PrismaService } from '@database/prisma.service';
 export class StudentService {
   prismaService: PrismaService;
 
-  constructor(prisma : PrismaService) {
-    this.prismaService = prisma
+  constructor(prisma: PrismaService) {
+    this.prismaService = prisma;
   }
 
   create(createStudentDto: CreateStudentDto) {
@@ -24,7 +24,7 @@ export class StudentService {
   findOne(id: string) {
     return this.prismaService.student.findFirst({
       where: { id },
-    })
+    });
   }
 
   update(id: string, updateStudentDto: UpdateStudentDto) {

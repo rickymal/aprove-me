@@ -5,12 +5,11 @@ import { PrismaService } from '@database/prisma.service';
 describe('QuestionService', () => {
   let questionService: QuestionService;
 
-
-  let mockedPrismaService = {
+  const mockedPrismaService = {
     question: {
-      findMany: jest.fn()
-    }
-  }
+      findMany: jest.fn(),
+    },
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,8 +17,8 @@ describe('QuestionService', () => {
         QuestionService,
         {
           provide: PrismaService,
-          useValue: mockedPrismaService
-        }
+          useValue: mockedPrismaService,
+        },
       ],
     }).compile();
 
@@ -31,9 +30,9 @@ describe('QuestionService', () => {
   });
 
   it("should be capable of loading all test name's", async () => {
-    const expected = {test: 123}
-    mockedPrismaService.question.findMany.mockResolvedValue(expected)
-    const result = await questionService.findAll()
-    expect(result).toBe(expected)
-  })
+    const expected = { test: 123 };
+    mockedPrismaService.question.findMany.mockResolvedValue(expected);
+    const result = await questionService.findAll();
+    expect(result).toBe(expected);
+  });
 });

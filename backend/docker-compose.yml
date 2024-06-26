@@ -67,19 +67,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock  # Montando o socket do Docker para permitir que Jenkins controle o Docker
-    environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false  # Desabilita o assistente de configuração inicial para automação
-
 volumes:
-  jenkins_home:
   postgres-data:
   redis-data:

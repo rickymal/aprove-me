@@ -2,8 +2,8 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 class UserDTO {
-    email : string
-    password : string
+  email: string;
+  password: string;
 }
 
 @Controller('integration')

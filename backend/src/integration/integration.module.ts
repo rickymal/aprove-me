@@ -9,7 +9,6 @@ import { StudentQuestionModule } from './student-question/student-question.modul
 import { TestQuestionModule } from './assessment/test-question.module';
 import { TestQuestion } from './assessment/entities/test-question.entity';
 
-
 @Module({
   imports: [
     RouterModule.register([
@@ -25,7 +24,7 @@ import { TestQuestion } from './assessment/entities/test-question.entity';
             module: AssignorModule,
           },
           {
-            path: "organization",
+            path: 'organization',
             module: OrganizationModule,
           },
           // {
@@ -33,21 +32,21 @@ import { TestQuestion } from './assessment/entities/test-question.entity';
           //   module: OrganizationTestModule,
           // },
           {
-            path: "question",
+            path: 'question',
             module: QuestionModule,
           },
           {
-            path: "/",
+            path: '/',
             module: StudentModule,
           },
           {
-            path: "/",
-            module: StudentQuestionModule
+            path: '/',
+            module: StudentQuestionModule,
           },
           {
-            path: "/",
+            path: '/',
             module: TestQuestion,
-          }
+          },
         ],
       },
     ]),

@@ -7,13 +7,15 @@ import { PrismaService } from '@database/prisma.service';
 export class OrganizationService {
   private readonly logger = new Logger(OrganizationService.name);
   prismaService: PrismaService;
-  
-  constructor(prisma : PrismaService) {
-    this.prismaService = prisma
+
+  constructor(prisma: PrismaService) {
+    this.prismaService = prisma;
   }
 
   create(createOrganizationDto: CreateOrganizationDto) {
-    return this.prismaService.organization.create({ data: createOrganizationDto });
+    return this.prismaService.organization.create({
+      data: createOrganizationDto,
+    });
   }
 
   findAll() {

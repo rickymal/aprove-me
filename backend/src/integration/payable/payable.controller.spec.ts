@@ -12,7 +12,13 @@ describe('PayableController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PayableController],
-      providers: [PayableService, PrismaService, SessionManagerService, {provide: RedisService, useValue: {}}, {provide: RabbitMqFactoryService, useValue: {}}],
+      providers: [
+        PayableService,
+        PrismaService,
+        SessionManagerService,
+        { provide: RedisService, useValue: {} },
+        { provide: RabbitMqFactoryService, useValue: {} },
+      ],
     }).compile();
 
     controller = module.get<PayableController>(PayableController);

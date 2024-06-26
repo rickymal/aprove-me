@@ -7,47 +7,44 @@ import { PrismaService } from '@database/prisma.service';
 export class TestQuestionService {
   prismaService: PrismaService;
 
-  constructor(prisma : PrismaService) {
-    this.prismaService = prisma
+  constructor(prisma: PrismaService) {
+    this.prismaService = prisma;
   }
-
 
   create(createTestQuestionDto: CreateTestQuestionDto) {
     return this.prismaService.test.create({
-      data: createTestQuestionDto
-    })
+      data: createTestQuestionDto,
+    });
   }
 
   findAll() {
-    return this.prismaService.test.findMany()
+    return this.prismaService.test.findMany();
   }
 
   findAllNames() {
     return this.prismaService.test.findMany({
       select: {
         id: true,
-        name: true
-      }
-    })
+        name: true,
+      },
+    });
   }
 
   findOne(id: string) {
-    throw new Error("Not implemented")
+    throw new Error('Not implemented');
   }
 
   findByTestId(id: string) {
     return this.prismaService.test.findMany({
-      where: {
-        
-      }
-    })
+      where: {},
+    });
   }
 
   update(id: string, updateTestQuestionDto: UpdateTestQuestionDto) {
-    throw new Error("Not implemented")
+    throw new Error('Not implemented');
   }
 
   remove(id: string) {
-    throw new Error("Not implemented")
+    throw new Error('Not implemented');
   }
 }

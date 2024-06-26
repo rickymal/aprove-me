@@ -28,7 +28,9 @@ describe('SessionManagerService', () => {
     }).compile();
 
     service = module.get<SessionManagerService>(SessionManagerService);
-    redisService = module.get<RedisService>(RedisService) as jest.Mocked<RedisService>;
+    redisService = module.get<RedisService>(
+      RedisService,
+    ) as jest.Mocked<RedisService>;
   });
 
   afterEach(() => {
@@ -41,7 +43,11 @@ describe('SessionManagerService', () => {
 
   describe('createSession', () => {
     it('should create a session', async () => {
-      const user: User = { id: '1', email: 'test@example.com', password: 'hashedpassword' };
+      const user: User = {
+        id: '1',
+        email: 'test@example.com',
+        password: 'hashedpassword',
+      };
       const token = 'generated-token';
       (uuidv4 as jest.Mock).mockReturnValue(token);
       const expiryDuration = 60 * 60 * 1000; // 1 hour
@@ -49,11 +55,11 @@ describe('SessionManagerService', () => {
       await service.createSession(user);
 
       expect(uuidv4).toHaveBeenCalled();
-      
+
       expect(redisService.set).toHaveBeenCalledWith(
         token,
         expect.any(String),
-        // JSON.stringify({ user, expiry: expect.any(Number) }), 
+        // JSON.stringify({ user, expiry: expect.any(Number) }),
         // JSON.stringify({ user, expiry: expect.any(Number) }),
         expect.any(Number),
       );
@@ -70,7 +76,11 @@ describe('SessionManagerService', () => {
 
   describe('getSession', () => {
     it('should return the user if the session is valid', async () => {
-      const user: User = { id: '1', email: 'test@example.com', password: 'hashedpassword' };
+      const user: User = {
+        id: '1',
+        email: 'test@example.com',
+        password: 'hashedpassword',
+      };
       const session = { user, expiry: Date.now() + 10000 };
       redisService.get.mockResolvedValue(JSON.stringify(session));
 
@@ -79,7 +89,14 @@ describe('SessionManagerService', () => {
     });
 
     it('should return null if the session has expired', async () => {
-      const session = { user: { id: '1', email: 'test@example.com', password: 'hashedpassword' }, expiry: Date.now() - 10000 };
+      const session = {
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          password: 'hashedpassword',
+        },
+        expiry: Date.now() - 10000,
+      };
       redisService.get.mockResolvedValue(JSON.stringify(session));
 
       const result = await service.getSession('expired-token');

@@ -7,8 +7,8 @@ import { PrismaService } from '@database/prisma.service';
 export class QuestionService {
   prismaService: PrismaService;
 
-  constructor(prisma : PrismaService) {
-    this.prismaService = prisma 
+  constructor(prisma: PrismaService) {
+    this.prismaService = prisma;
   }
   create(createQuestionDto: CreateQuestionDto) {
     return this.prismaService.question.create({
@@ -19,7 +19,6 @@ export class QuestionService {
   findAll() {
     return this.prismaService.question.findMany();
   }
-
 
   findByTestId(testId: string) {
     return this.prismaService.question.findMany({

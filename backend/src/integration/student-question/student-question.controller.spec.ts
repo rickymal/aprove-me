@@ -12,7 +12,9 @@ describe('StudentQuestionController', () => {
       providers: [StudentQuestionService, PrismaService],
     }).compile();
 
-    controller = module.get<StudentQuestionController>(StudentQuestionController);
+    controller = module.get<StudentQuestionController>(
+      StudentQuestionController,
+    );
   });
 
   it('should be defined', () => {

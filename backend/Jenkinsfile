@@ -1,9 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_COMPOSE_FILE = 'docker-compose.test.yml'
-    }
 
     stages {
         stage('Checkout') {
@@ -11,36 +8,41 @@ pipeline {
                 git branch: 'dev', url: 'https://github.com/rickymal/aprove-me'
             }
         }
-        stage('Docker Compose Up') {
-            steps {
-                sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
-            }
-        }
         stage('Install Dependencies') {
             steps {
-                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm install'
+                sh 'docker-compose -f docker-compose.yml run --rm app npm install'
             }
         }
-        stage('Lint') {
+        stage('Generate Prisma') {
             steps {
-                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run lint'
+                sh 'docker-compose -f docker-compose.yml run --rm app npx prisma generate'
+            }
+        }
+        stage('Run Migrations') {
+            steps {
+                sh 'docker-compose -f docker-compose.yml run --rm app npx prisma migrate deploy'
             }
         }
         stage('Test') {
             steps {
-                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run test'
+                sh 'docker-compose -f docker-compose.yml run --rm app npm run test'
             }
         }
+        // stage('Lint') {
+        //     steps {
+        //         sh 'docker-compose -f docker-compose.yml run --rm app npm run lint'
+        //     }
+        // }
         stage('Build') {
             steps {
-                sh 'docker-compose -f $DOCKER_COMPOSE_FILE run --rm app npm run build'
+                sh 'docker-compose -f docker-compose.yml run --rm app npm run build'
             }
         }
     }
 
     post {
         always {
-            sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+            sh 'docker-compose -f docker-compose.yml down'
             cleanWs()
         }
         success {
