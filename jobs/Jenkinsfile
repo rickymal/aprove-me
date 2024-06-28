@@ -16,15 +16,18 @@ pipeline {
                 script {
                     // Lista os arquivos no workspace atual
                     sh 'ls -la'
+                    // Lista os arquivos no diretório backend
+                    sh 'ls -la backend'
                 }
             }
         }
         stage('Install Dependencies and Test') {
             steps {
                 script {
+                    // Verifica se o package.json está presente
+                    sh 'test -f backend/package.json || { echo "package.json not found!"; exit 1; }'
                     // Executa os comandos docker-compose no diretório correto
                     sh 'docker-compose -f $DOCKER_COMPOSE_PATH build'
-                    // sh 'docker-compose -f $DOCKER_COMPOSE_PATH run --rm app npm install'
                     sh 'docker-compose -f $DOCKER_COMPOSE_PATH up'
                 }
             }
