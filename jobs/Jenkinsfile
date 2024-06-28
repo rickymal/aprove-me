@@ -16,7 +16,6 @@ pipeline {
                 script {
                     // Lista os arquivos no workspace atual
                     sh 'ls -la'
-                    // Lista os arquivos no diretório backend
                     sh 'ls -la backend'
                 }
             }
@@ -25,10 +24,14 @@ pipeline {
             steps {
                 script {
                     // Verifica se o package.json está presente
-                    sh 'test -f backend/package.json || { echo "package.json not found!"; exit 1; }'
+                    sh 'test -f backend/package.json'
+
                     // Executa os comandos docker-compose no diretório correto
                     sh 'docker-compose -f $DOCKER_COMPOSE_PATH build'
-                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH up'
+                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH up -d'
+
+                    // Adiciona um passo de debug para verificar os arquivos no contêiner
+                    sh 'docker exec $(docker ps -q -f "name=backend_app") ls -la /app'
                 }
             }
         }

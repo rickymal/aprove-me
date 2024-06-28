@@ -10,7 +10,6 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    # container_name: app
     command: ["npm", "run", "test"]
     environment:
       NODE_ENV: "development"
@@ -22,53 +21,3 @@ services:
       SESSION_EXPIRY_MINUTES: 3600
       DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
       REDIS_URL: "redis://redis:6379"
-    # depends_on:
-    #   - rabbitmq
-    #   - mailhog
-    #   - postgres
-    #   - redis
-
-#   rabbitmq:
-#     image: "rabbitmq:3-management"
-#     ports:
-#       - "5672:5672"
-#       - "15672:15672"
-#     restart: always
-
-#   mailhog:
-#     image: mailhog/mailhog
-#     ports:
-#       - "1025:1025"
-#       - "8025:8025"
-#     restart: always
-
-#   postgres:
-#     image: postgres:14
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: postgres
-#       POSTGRES_DB: postgres
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - postgres-data:/var/lib/postgresql/data
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-
-#   redis:
-#     image: redis:latest
-#     ports:
-#       - "6379:6379"
-#     volumes:
-#       - redis-data:/data
-#     healthcheck:
-#       test: ["CMD", "redis-cli", "ping"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   postgres-data:
-#   redis-data:
