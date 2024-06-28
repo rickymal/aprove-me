@@ -11,18 +11,34 @@ pipeline {
                 git branch: 'dev', url: 'https://github.com/rickymal/aprove-me'
             }
         }
-        stage('Make test') {
+        stage('List Files') {
             steps {
-                sh 'docker-compose -f $DOCKER_COMPOSE_PATH up --build'
-                // dir('backend') {
-                // }
+                script {
+                    // Lista os arquivos no workspace atual
+                    sh 'ls -la'
+                    // Lista os arquivos no diretório backend
+                    sh 'ls -la ../backend'
+                }
+            }
+        }
+        stage('Install Dependencies and Test') {
+            steps {
+                script {
+                    // Executa os comandos docker-compose no diretório correto
+                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH build'
+                    // sh 'docker-compose -f $DOCKER_COMPOSE_PATH run --rm app npm install'
+                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH up'
+                }
             }
         }
     }
 
     post {
         always {
-            sh 'docker-compose -f $DOCKER_COMPOSE_PATH down'
+            script {
+                // Derruba os containers
+                sh 'docker-compose -f $DOCKER_COMPOSE_PATH down'
+            }
         }
         success {
             echo 'Pipeline executed successfully!'
