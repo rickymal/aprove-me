@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_COMPOSE_PATH = 'backend/docker-compose.yml'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'dev', url: 'https://github.com/rickymal/aprove-me'
+            }
+        }
+        stage('Make test') {
+            steps {
+                dir('backend') {
+                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH up --build'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

@@ -10,6 +10,8 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    # container_name: app
+    command: ["npm", "run", "start:dev"]
     environment:
       NODE_ENV: "development"
       RABBITMQ_URI: "amqp://rabbitmq"
