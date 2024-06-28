@@ -22,7 +22,7 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            sh 'docker-compose -f $DOCKER_COMPOSE_PATH down'
         }
         success {
             echo 'Pipeline executed successfully!'
