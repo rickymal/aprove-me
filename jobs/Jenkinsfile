@@ -16,8 +16,6 @@ pipeline {
                 script {
                     // Lista os arquivos no workspace atual
                     sh 'ls -la'
-                    // Lista os arquivos no diretório backend
-                    sh 'ls -la ../backend'
                 }
             }
         }
