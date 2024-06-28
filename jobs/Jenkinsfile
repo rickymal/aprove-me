@@ -13,9 +13,9 @@ pipeline {
         }
         stage('Make test') {
             steps {
-                dir('backend') {
-                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH up --build'
-                }
+                sh 'docker-compose -f $DOCKER_COMPOSE_PATH up --build'
+                // dir('backend') {
+                // }
             }
         }
     }
