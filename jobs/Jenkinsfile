@@ -30,7 +30,11 @@ pipeline {
                     sh 'docker-compose -f $DOCKER_COMPOSE_PATH build'
                     sh 'docker-compose -f $DOCKER_COMPOSE_PATH up -d'
 
+                    // Adiciona um pequeno atraso para garantir que o contêiner esteja totalmente inicializado
+                    sleep 10
+
                     // Adiciona um passo de debug para verificar os arquivos no contêiner
+                    sh 'docker ps -a'
                     sh 'docker exec $(docker ps -q -f "name=backend_app") ls -la /app'
                 }
             }
