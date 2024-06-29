@@ -1,4 +1,4 @@
-import { Assignor, Payable, Prisma } from "@prisma/client";
+import { Assignor, Payable, Prisma } from '@prisma/client';
 
 export class AssignorEntity implements Assignor {
   id: string;

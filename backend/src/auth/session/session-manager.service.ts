@@ -3,7 +3,6 @@ import { User } from '@prisma/client';
 import { RedisService } from '@database/redis/redis.service';
 import { v4 as uuidv4 } from 'uuid';
 
-
 interface Session {
   user: User;
   expiry: number;
@@ -22,7 +21,11 @@ export class SessionManagerService {
     const token = uuidv4();
     const expiry = Date.now() + this.expiryDuration;
     const session: Session = { user, expiry };
-    await this.redisService.set(token, JSON.stringify(session), this.expiryDuration / 1000);
+    await this.redisService.set(
+      token,
+      JSON.stringify(session),
+      this.expiryDuration / 1000,
+    );
     return token;
   }
 

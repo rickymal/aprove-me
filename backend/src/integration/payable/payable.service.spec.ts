@@ -21,10 +21,18 @@ describe('PayableService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, BrokerModule, MailerConfigModule, SessionModule],
+      imports: [
+        DatabaseModule,
+        BrokerModule,
+        MailerConfigModule,
+        SessionModule,
+      ],
       controllers: [PayableController],
       providers: [PayableService, PayableConsumerService, PrismaService],
-    }).overrideProvider(PrismaService).useValue(mockedPrisma).compile();
+    })
+      .overrideProvider(PrismaService)
+      .useValue(mockedPrisma)
+      .compile();
 
     service = module.get<PayableService>(PayableService);
     prisma = module.get<PrismaService>(PrismaService);
@@ -37,11 +45,11 @@ describe('PayableService', () => {
   describe('creation', () => {
     it('should create a new payable', async () => {
       const createPayableDto: CreatePayableDto = {
-        amount: 332500.30,
-        emissionDate: "2023-04-24T18:30:00.000Z",
+        amount: 332500.3,
+        emissionDate: '2023-04-24T18:30:00.000Z',
         assignor: {
           connect: {
-            id: "84795e0c-f551-4cee-8640-a264366cfa8d",
+            id: '84795e0c-f551-4cee-8640-a264366cfa8d',
           },
         },
       };
@@ -63,18 +71,22 @@ describe('PayableService', () => {
 
     it('should throw an error when creation fails', async () => {
       const createPayableDto: CreatePayableDto = {
-        amount: 332500.30,
-        emissionDate: "2023-04-24T18:30:00.000Z",
+        amount: 332500.3,
+        emissionDate: '2023-04-24T18:30:00.000Z',
         assignor: {
           connect: {
-            id: "84795e0c-f551-4cee-8640-a264366cfa8d",
+            id: '84795e0c-f551-4cee-8640-a264366cfa8d',
           },
         },
       };
 
-      mockedPrisma.payable.create.mockRejectedValue(new Error('Error creating payable'));
+      mockedPrisma.payable.create.mockRejectedValue(
+        new Error('Error creating payable'),
+      );
 
-      await expect(service.create(createPayableDto)).rejects.toThrow('Error creating payable');
+      await expect(service.create(createPayableDto)).rejects.toThrow(
+        'Error creating payable',
+      );
     });
   });
 });

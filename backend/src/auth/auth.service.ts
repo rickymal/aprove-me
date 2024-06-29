@@ -9,14 +9,13 @@ export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
-
     const user = this.prisma.user.create({
       data: {
         email: data.email,
-        password: data.password
-      }
-    })
-    return user
+        password: data.password,
+      },
+    });
+    return user;
   }
 
   async findOne(id: string): Promise<User | null> {
@@ -24,7 +23,7 @@ export class UserRepository {
   }
 
   async findOneByEmail(email: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({ where: { email : email } });
+    return await this.prisma.user.findUnique({ where: { email: email } });
   }
 }
 
@@ -35,7 +34,10 @@ export class AuthService {
     private readonly sessionManager: SessionManagerService,
   ) {}
 
-  async register(email: string, password: string): Promise<{ id: string, email: string, token: string }> {
+  async register(
+    email: string,
+    password: string,
+  ): Promise<{ id: string; email: string; token: string }> {
     let user: User | null = await this.userRepository.findOneByEmail(email);
     if (user) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
@@ -43,12 +45,18 @@ export class AuthService {
 
     const salt = randomBytes(16).toString('hex');
     const hashedPassword = this.hashPassword(password + '#AproveMe', salt);
-    user = await this.userRepository.create({ email, password: `${salt}:${hashedPassword}` });
+    user = await this.userRepository.create({
+      email,
+      password: `${salt}:${hashedPassword}`,
+    });
     const token = await this.sessionManager.createSession(user);
     return { id: user.id, email: user.email, token };
   }
 
-  async authenticate(email: string, password: string): Promise<{ id: string, email: string, token: string }> {
+  async authenticate(
+    email: string,
+    password: string,
+  ): Promise<{ id: string; email: string; token: string }> {
     const user: User | null = await this.userRepository.findOneByEmail(email);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -57,7 +65,10 @@ export class AuthService {
     const [salt, storedHash] = user.password.split(':');
     const hashedPassword = this.hashPassword(password + '#AproveMe', salt);
     if (hashedPassword !== storedHash) {
-      throw new HttpException('Invalid email or password', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     const token = await this.sessionManager.createSession(user);

@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_COMPOSE_PATH = './backend/docker-compose.test.yml'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'dev', url: 'https://github.com/rickymal/aprove-me'
+            }
+        }
+        stage('List Files') {
+            steps {
+                script {
+                    // Lista os arquivos no workspace atual
+                    sh 'ls -la'
+                    sh 'ls -la backend'
+                }
+            }
+        }
+        stage('Install Dependencies and Test') {
+            steps {
+                script {
+
+                    sh 'docker-compose -f $DOCKER_COMPOSE_PATH up --build'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Derruba os containers
+                sh 'docker-compose -f $DOCKER_COMPOSE_PATH down'
+            }
+        }
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

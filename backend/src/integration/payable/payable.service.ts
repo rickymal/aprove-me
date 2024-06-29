@@ -5,13 +5,12 @@ import type { UpdatePayableDto } from './dto/update-payable.dto';
 import { PrismaService } from '@database/prisma.service';
 // import { PrismaService } from '@database/prisma.service';
 
-
 @Injectable()
 export class PayableService {
   private readonly logger = new Logger(PayableService.name);
 
-  constructor(private prisma: PrismaService) { }
-  
+  constructor(private prisma: PrismaService) {}
+
   async create(createPayableDto: CreatePayableDto) {
     try {
       return await this.prisma.payable.create({ data: createPayableDto });

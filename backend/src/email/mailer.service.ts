@@ -8,11 +8,11 @@ type ContextOptions = {
 };
 
 type MailOption<T> = {
-  to : string
-  subject : string
-  template : string
-  context : T
-}
+  to: string;
+  subject: string;
+  template: string;
+  context: T;
+};
 
 @Injectable()
 export class MailerService {
