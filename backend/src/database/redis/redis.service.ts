@@ -23,9 +23,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       this.logger.error('Redis Client Error', err);
     });
 
+    await this.client.connect();
     // await this.connectWithRetry();
   }
 
+  // yagni
   private async connectWithRetry(): Promise<void> {
     for (let i = 0; i < this.maxAttempts; i++) {
       try {

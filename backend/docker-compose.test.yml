@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    command: ["npm", "run", "test"]
+    command: ["npm", "run", "test", "test/app.e2e-spec.ts"]
     environment:
       NODE_ENV: "development"
       RABBITMQ_URI: "amqp://rabbitmq"

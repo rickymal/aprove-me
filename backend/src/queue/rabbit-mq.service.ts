@@ -8,8 +8,6 @@ import amqp, {
   AmqpConnectionManager,
   ChannelWrapper,
 } from 'amqp-connection-manager';
-import { CreatePayableDto } from 'src/integration/payable/dto/create-payable.dto';
-import { Payable } from '@prisma/client';
 
 type ConsumerOptions<T> = {
   retries: number;
@@ -38,11 +36,15 @@ type ConsumerOptions<T> = {
 export class RabbitMqFactoryService implements OnModuleDestroy, OnModuleInit {
   private readonly logger = new Logger(RabbitMqFactoryService.name);
   private connection: AmqpConnectionManager;
+  private channels: ChannelWrapper[] = []; // Para armazenar os canais criados
 
   async onModuleInit() {
     this.connection = await amqp.connect([
       process.env.RABBITMQ_URI || 'amqp://localhost:5672',
     ]);
+
+    this.connection.on('connect', () => this.logger.log('Connected to RabbitMQ'));
+    this.connection.on('disconnect', params => this.logger.error('Disconnected from RabbitMQ', params.err));
   }
 
   createProducer<T>(queueName: string): RabbitMqProducer<T> {
@@ -50,6 +52,7 @@ export class RabbitMqFactoryService implements OnModuleDestroy, OnModuleInit {
       json: true,
       setup: (channel) => channel.assertQueue(queueName, { durable: true }),
     });
+    this.channels.push(channel); // Adiciona o canal à lista
     return new RabbitMqProducer<T>(channel, this.logger, queueName);
   }
 
@@ -59,11 +62,20 @@ export class RabbitMqFactoryService implements OnModuleDestroy, OnModuleInit {
       setup: (channel) =>
         channel.assertQueue(consumerOptions.queueName, { durable: true }),
     });
+    this.channels.push(channel); // Adiciona o canal à lista
     return new RabbitMqConsumer<T>(channel, this.logger, consumerOptions);
   }
 
   async onModuleDestroy() {
-    await this.connection.close();
+    // Fecha todos os canais antes de fechar a conexão
+    for (const channel of this.channels) {
+      await channel.close();
+      this.logger.log('RabbitMQ channel closed');
+    }
+    if (this.connection) {
+      await this.connection.close();
+      this.logger.log('RabbitMQ connection closed');
+    }
   }
 }
 

@@ -2,22 +2,21 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { PrismaService } from '@database/prisma.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
-  let mockedPrismaService: PrismaService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .overrideProvider(PrismaService)
-      .useValue({})
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 
   it('/ (GET)', () => {
@@ -29,7 +28,30 @@ describe('AppController (e2e)', () => {
 });
 
 describe.only('User journey', () => {
-  it.todo('should load all test names');
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should load all test names', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/test-question/names')
+      .expect(200);
+    expect(response.body).toEqual(
+      [{"id": "da5219a6-1c8e-4b4c-a089-b4ac5a8300bc", "name": "Prova 1"}, {"id": "ga5219a6-1c8e-4b4c-a089-b4ac5a8300bc", "name": "Prova 2"}, {"id": "fa5219a6-1c8e-4b4c-a089-b4ac5a8300bc", "name": "Prova 3"}, {"id": "ea5219a6-1c8e-4b4c-a089-b4ac5a8300bc", "name": "Prova 4"}]
+    );
+  });
+
   it.todo('should select the test and return the questions');
   it.todo('should be capable of select an option and send');
   it.todo('should be capable of select multiples options and send');
