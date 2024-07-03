@@ -36,7 +36,7 @@ type ConsumerOptions<T> = {
 export class RabbitMqFactoryService implements OnModuleDestroy, OnModuleInit {
   private readonly logger = new Logger(RabbitMqFactoryService.name);
   private connection: AmqpConnectionManager;
-  private channels: ChannelWrapper[] = []; // Para armazenar os canais criados
+  private channels: ChannelWrapper[] = [];
 
   async onModuleInit() {
     this.connection = await amqp.connect([
@@ -52,7 +52,7 @@ export class RabbitMqFactoryService implements OnModuleDestroy, OnModuleInit {
       json: true,
       setup: (channel) => channel.assertQueue(queueName, { durable: true }),
     });
-    this.channels.push(channel); // Adiciona o canal à lista
+    this.channels.push(channel);
     return new RabbitMqProducer<T>(channel, this.logger, queueName);
   }
 
@@ -62,15 +62,13 @@ export class RabbitMqFactoryService implements OnModuleDestroy, OnModuleInit {
       setup: (channel) =>
         channel.assertQueue(consumerOptions.queueName, { durable: true }),
     });
-    this.channels.push(channel); // Adiciona o canal à lista
+    this.channels.push(channel);
     return new RabbitMqConsumer<T>(channel, this.logger, consumerOptions);
   }
 
   async onModuleDestroy() {
-    // Fecha todos os canais antes de fechar a conexão
     for (const channel of this.channels) {
       await channel.close();
-      this.logger.log('RabbitMQ channel closed');
     }
     if (this.connection) {
       await this.connection.close();

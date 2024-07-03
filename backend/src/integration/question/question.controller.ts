@@ -26,7 +26,7 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
-  @Get()
+  @Get('by')
   findAllByTestId(@Query('testId') testId: string) {
     return this.questionService.findByTestId(testId);
   }

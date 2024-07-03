@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { PrismaService } from '@database/prisma.service';
@@ -6,6 +6,7 @@ import { PrismaService } from '@database/prisma.service';
 @Injectable()
 export class QuestionService {
   prismaService: PrismaService;
+  private readonly logger = new Logger(QuestionService.name);
 
   constructor(prisma: PrismaService) {
     this.prismaService = prisma;
@@ -20,10 +21,21 @@ export class QuestionService {
     return this.prismaService.question.findMany();
   }
 
-  findByTestId(testId: string) {
-    return this.prismaService.question.findMany({
-      where: { test_id: testId },
-    });
+  async findByTestId(testId: string) {
+    const questions = await this.prismaService.question.findMany({
+      where: {test_id: testId}
+    })
+    this.logger.log("Teste")
+    
+    
+
+    const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
+      const answers = await this.prismaService.questionAnswer.findMany({
+        where: { question_id: question.id }
+      })
+      return { question, answers }
+    }))
+    return questionsWithAnswers
   }
 
   findOne(id: string) {
