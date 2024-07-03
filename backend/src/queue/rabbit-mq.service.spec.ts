@@ -2,7 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import * as amqp from 'amqp-connection-manager';
 import { CreatePayableDto } from '@integration/payable/dto/create-payable.dto';
-import { RabbitMqConsumer, RabbitMqFactoryService, RabbitMqProducer } from './rabbit-mq.service';
+import {
+  RabbitMqConsumer,
+  RabbitMqFactoryService,
+  RabbitMqProducer,
+} from './rabbit-mq.service';
 
 jest.mock('amqp-connection-manager');
 

@@ -19,8 +19,11 @@ describe('AssignorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [AssignorService],
-    }).overrideProvider(PrismaService).useValue(mockerPrismaService).compile();
+      providers: [AssignorService, PrismaService],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(mockerPrismaService)
+      .compile();
 
     service = module.get<AssignorService>(AssignorService);
   });
@@ -29,31 +32,30 @@ describe('AssignorService', () => {
     expect(service).toBeDefined();
   });
 
-
-  it('should create a new assignor', async() => {
-    const createAssignorDto : CreateAssignorDto = {
-      name: "test",
-      document: "12345678901",
-      email: "<EMAIL>",
-      phone: "12345678901",
-    }
+  it('should create a new assignor', async () => {
+    const createAssignorDto: CreateAssignorDto = {
+      name: 'test',
+      document: '12345678901',
+      email: '<EMAIL>',
+      phone: '12345678901',
+    };
 
     mockerPrismaService.assignor.create.mockResolvedValue({
-      "id": "84795e0c-f551-4cee-8640-a264366cfa8d",
-      "name": "João Silva",
-      "document": "123.456.789-00",
-      "email": "joao.silva@example.com",
-      "phone": "+55 11 99999-9999"
-    })
+      id: '84795e0c-f551-4cee-8640-a264366cfa8d',
+      name: 'João Silva',
+      document: '123.456.789-00',
+      email: 'joao.silva@example.com',
+      phone: '+55 11 99999-9999',
+    });
 
-    const resp = await service.create(createAssignorDto)
+    const resp = await service.create(createAssignorDto);
 
     expect(resp).toEqual({
-      "id": "84795e0c-f551-4cee-8640-a264366cfa8d",
-      "name": "João Silva",
-      "document": "123.456.789-00",
-      "email": "joao.silva@example.com",
-      "phone": "+55 11 99999-9999"
-    })
-  })
+      id: '84795e0c-f551-4cee-8640-a264366cfa8d',
+      name: 'João Silva',
+      document: '123.456.789-00',
+      email: 'joao.silva@example.com',
+      phone: '+55 11 99999-9999',
+    });
+  });
 });

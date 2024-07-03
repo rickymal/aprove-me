@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from '@prisma/client';
 
 export class CreateAssignorDto implements Prisma.AssignorCreateInput {
   name: string;
@@ -6,4 +6,3 @@ export class CreateAssignorDto implements Prisma.AssignorCreateInput {
   email: string;
   phone: string;
 }
-

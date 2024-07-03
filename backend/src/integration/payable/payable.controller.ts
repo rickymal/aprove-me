@@ -1,10 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, OnModuleInit, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  OnModuleInit,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { PayableService } from './payable.service';
 import { CreatePayableDto } from './dto/create-payable.dto';
 import { UpdatePayableDto } from './dto/update-payable.dto';
-import { RabbitMqFactoryService, RabbitMqProducer } from '@queue/rabbit-mq.service';
+import {
+  RabbitMqFactoryService,
+  RabbitMqProducer,
+} from '@queue/rabbit-mq.service';
 import { AuthGuard } from '@auth/auth.guard';
-
 
 @UseGuards(AuthGuard)
 @Controller()
@@ -12,12 +25,12 @@ export class PayableController implements OnModuleInit {
   producer: RabbitMqProducer<CreatePayableDto>;
   constructor(
     private readonly payableService: PayableService,
-    private readonly rabbitMqFactoryService: RabbitMqFactoryService
+    private readonly rabbitMqFactoryService: RabbitMqFactoryService,
   ) {}
-  
 
   onModuleInit() {
-    this.producer = this.rabbitMqFactoryService.createProducer<CreatePayableDto>('payables');
+    this.producer =
+      this.rabbitMqFactoryService.createProducer<CreatePayableDto>('payables');
   }
 
   @Post()
@@ -37,7 +50,6 @@ export class PayableController implements OnModuleInit {
       take: limit,
     });
   }
-
 
   @Get(':id')
   findOne(@Param('id') id: string) {
