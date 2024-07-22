@@ -3,7 +3,6 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { CreateStudentQuestionDto } from '@integration/student-question/dto/create-student-question.dto';
-import { connect } from 'http2';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -114,7 +113,7 @@ describe.only('User journey', () => {
    * Onde isso seria tratado? (pensar nisso)
    * @todo: pensar nisso
    */
-  it.only('should be capable of select multiples options and send', async () => {
+  it('should be capable of select multiples options and send', async () => {
     const body: CreateStudentQuestionDto = {
       question: {
         connect: {
@@ -141,16 +140,21 @@ describe.only('User journey', () => {
   });
 
   it('should be capable of select one or more options as wrong and send', async () => {
-    const body = {
+    const body: CreateStudentQuestionDto = {
       question: {
         connect: {
           id: 'c3ed26d0-3439-435b-8d33-913190ce47de',
         },
       },
       marked_answers: [
-        { id: 'c3ed26d0-3439-435b-8d33-913190ce47de', is_correct: false },
         { id: '41eff63d-71e8-4b77-9109-c783a341d848', is_correct: false },
+        { id: 'ccb4c804-7178-4aae-82fc-feb5d7309d5c', is_correct: false },
       ],
+      student: {
+        connect: {
+          id: '38f2be71-a882-4fff-baf6-4d11b33fab4e',
+        },
+      },
     };
 
     const response = await request(app.getHttpServer())

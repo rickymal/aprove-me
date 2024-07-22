@@ -11,7 +11,6 @@ export class StudentQuestionService {
 
   constructor(prisma: PrismaService) {
     this.prismaService = prisma;
-    
   }
 
   async create(createStudentQuestionDto: CreateStudentQuestionDto) {
@@ -21,6 +20,20 @@ export class StudentQuestionService {
     ) {
       throw new HttpException(
         'You must provide at least one of the following fields: markedAnswers or answer_text',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!createStudentQuestionDto.question) {
+      throw new HttpException(
+        'You must provide a question',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!createStudentQuestionDto.student) {
+      throw new HttpException(
+        'You must provide a student',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -42,6 +55,7 @@ export class StudentQuestionService {
             );
           }
 
+          console.log({ createStudentQuestionDto });
           const data: Prisma.StudentQuestionCreateManyInput = {
             answer_text: '',
             is_excluded: marked_answer.is_correct,
@@ -52,6 +66,7 @@ export class StudentQuestionService {
           return data;
         });
 
+      console.log({ dataToBeLoaded });
       this.logger.log({ dataToBeLoaded, message: 'data bulk to be created' });
       return this.prismaService.studentQuestion.createMany({
         data: dataToBeLoaded,
