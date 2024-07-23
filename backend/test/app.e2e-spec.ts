@@ -21,14 +21,11 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
   });
 });
 
-describe.only('User journey', () => {
+describe('Basic User journey for testing', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -45,20 +42,12 @@ describe.only('User journey', () => {
   });
 
   it('should load all test names', async () => {
-    const response = await request(app.getHttpServer())
-      .get('/test-question/names')
-      .expect(200);
-    expect(response.body).toEqual([
-      { id: expect.any(String), name: expect.any(String) },
-    ]);
+    const response = await request(app.getHttpServer()).get('/test-question/names').expect(200);
+    expect(response.body).toEqual([{ id: expect.any(String), name: expect.any(String) }]);
   });
 
   it('should select the test and return the questions', async () => {
-    const response = await request(app.getHttpServer())
-      .get(
-        '/integration/question/by?testId=11816117-2582-4322-80e9-4303c8a9b13f',
-      )
-      .expect(200);
+    const response = await request(app.getHttpServer()).get('/integration/question/by?testId=11816117-2582-4322-80e9-4303c8a9b13f').expect(200);
 
     expect(response.body).toBeInstanceOf(Array);
 
@@ -100,10 +89,7 @@ describe.only('User journey', () => {
       },
     };
 
-    const response = await request(app.getHttpServer())
-      .post('/integration/student-question/')
-      .send(body)
-      .expect(201);
+    const response = await request(app.getHttpServer()).post('/integration/student-question/').send(body).expect(201);
 
     expect(response.body).toMatchObject({ status: 'created' });
   });
@@ -131,10 +117,7 @@ describe.only('User journey', () => {
       },
     };
 
-    const response = await request(app.getHttpServer())
-      .post('/integration/student-question/')
-      .send(body)
-      .expect(201);
+    const response = await request(app.getHttpServer()).post('/integration/student-question/').send(body).expect(201);
 
     expect(response.body).toMatchObject({ status: 'created' });
   });
@@ -157,10 +140,7 @@ describe.only('User journey', () => {
       },
     };
 
-    const response = await request(app.getHttpServer())
-      .post('/integration/student-question/')
-      .send(body)
-      .expect(201);
+    const response = await request(app.getHttpServer()).post('/integration/student-question/').send(body).expect(201);
 
     expect(response.body).toMatchObject({ status: 'created' });
   });

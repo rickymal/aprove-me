@@ -27,10 +27,6 @@ import { TestQuestion } from './assessment/entities/test-question.entity';
             path: 'organization',
             module: OrganizationModule,
           },
-          // {
-          //   path: "organization-test",
-          //   module: OrganizationTestModule,
-          // },
           {
             path: 'question',
             module: QuestionModule,
@@ -61,5 +57,6 @@ import { TestQuestion } from './assessment/entities/test-question.entity';
     TestQuestionModule,
   ],
   controllers: [],
+  providers: [],
 })
 export class IntegrationModule {}
